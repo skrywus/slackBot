@@ -1,4 +1,4 @@
-import {TOKEN, TARGET_LANGUAGE, PROJECT_ID} from './config';
+import {TOKEN, TARGET_LANGUAGE, PROJECT_ID} from './token/config';
 
 const Translate = require('@google-cloud/translate');
 const RtmClient = require('@slack/client').RtmClient;
@@ -14,7 +14,6 @@ const rtm = new RtmClient(TOKEN);
 rtm.start();
 
 rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
-
     translateClient.detect(message.text)
         .then((detection) => {
 
@@ -22,14 +21,19 @@ rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
 
                 translateClient.translate(message.text, TARGET_LANGUAGE)
                     .then((translation) => {
-                        /*rtm._send({
+                        rtm.send({
                             type: 'message',
-                            text: "[Translation]:" + translation[0],
+                            text: "translated " + translation[0],
                             channel: message.channel,
+                            user: message.user,
                             as_user: true
-                        });*/
-                        console.log("message", message);
-                        rtm.chat.update(message.channel, "lalalal", message.ts)
+                        });
+                        //console.log("message", message);
+                        web.channels.info(message.channel)
+                            .then(channelInfo => {
+                                console.log(channelInfo);
+                                web.chat.postMessage(message.user, "Please use English on #" + channelInfo.channel.name + " channel.", true)
+                            })
                     })
                     .catch((err) => {
                         console.error('ERROR:', err);
