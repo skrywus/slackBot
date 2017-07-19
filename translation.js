@@ -6,7 +6,7 @@ const WebClient = require('@slack/client').WebClient;
 const RTM_EVENTS = require('@slack/client').RTM_EVENTS;
 const translateClient = Translate({
     projectId: PROJECT_ID,
-    keyFilename: './slackTranslationBot-bd49c16473e1.json'
+    keyFilename: './token/slackTranslationBot-bd49c16473e1.json'
 });
 
 const web = new WebClient(TOKEN);
