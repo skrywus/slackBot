@@ -4,7 +4,7 @@
   "description": "Making Waves Slack Bot for translations",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "babel-node translation.js --presets es2015,stage-2"
   },
   "repository": {
     "type": "git",
@@ -17,6 +17,13 @@
   },
   "homepage": "https://github.com/skrywus/slackBot#readme",
   "dependencies": {
-    "@slack/client": "^3.10.0"
+    "@google-cloud/translate": "^1.0.0",
+    "@slack/client": "^3.10.0",
+    "googleapis": "^20.1.0",
+    "babel-cli": "^6.24.1",
+    "babel-jest": "^20.0.3",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1"
   }
 }
