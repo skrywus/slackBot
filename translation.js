@@ -17,29 +17,29 @@ rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
     translateClient.detect(message.text)
         .then((detection) => {
 
-            if(detection[0].language != TARGET_LANGUAGE) {
+            if (detection[0].language != TARGET_LANGUAGE) {
 
                 translateClient.translate(message.text, TARGET_LANGUAGE)
                     .then((translation) => {
                         rtm.send({
                             type: 'message',
-                            text: "translated " + translation[0],
+                            text: "[Translated]: " + translation[0],
                             channel: message.channel,
                             user: message.user,
                             as_user: true
                         });
-                        //console.log("message", message);
+
                         web.channels.info(message.channel)
                             .then(channelInfo => {
                                 console.log(channelInfo);
-                                web.chat.postMessage(message.user, "Please use English on #" + channelInfo.channel.name + " channel.", true)
-                            })
+                                web.chat.postMessage(message.user, "Please use English on #" + channelInfo.channel.name + " channel.", true);
+                            });
                     })
                     .catch((err) => {
                         console.error('ERROR:', err);
                     });
             }
 
-        })
+        });
 });
 
