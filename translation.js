@@ -4,6 +4,7 @@ const Translate = require('@google-cloud/translate');
 const RtmClient = require('@slack/client').RtmClient;
 const WebClient = require('@slack/client').WebClient;
 const RTM_EVENTS = require('@slack/client').RTM_EVENTS;
+
 const translateClient = Translate({
     projectId: PROJECT_ID,
     keyFilename: './token/slackTranslationBot-bd49c16473e1.json'
@@ -11,12 +12,11 @@ const translateClient = Translate({
 
 const web = new WebClient(TOKEN);
 const rtm = new RtmClient(TOKEN);
-rtm.start();
 
+rtm.start();
 rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
     translateClient.detect(message.text)
         .then((detection) => {
-
             if (detection[0].language != TARGET_LANGUAGE) {
 
                 translateClient.translate(message.text, TARGET_LANGUAGE)
@@ -25,21 +25,25 @@ rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
                             type: 'message',
                             text: "[Translated]: " + translation[0],
                             channel: message.channel,
-                            user: message.user,
-                            as_user: true
+                            as_user: false
                         });
 
-                        web.channels.info(message.channel)
-                            .then(channelInfo => {
-                                console.log(channelInfo);
-                                web.chat.postMessage(message.user, "Please use English on #" + channelInfo.channel.name + " channel.", true);
-                            });
+                        web.groups.list(message.channel)
+                            .then(channel => {
+                                channel.groups.forEach(channelInfo => {
+                                    if(channelInfo.id === message.channel) {
+                                        web.chat.postMessage(message.user, "Please use English on #" + channelInfo.name + " channel.", true);
+                                    }
+                                })
+                            })
+                            .catch(error => console.log(error));
                     })
                     .catch((err) => {
-                        console.error('ERROR:', err);
+                        console.error(err);
                     });
             }
 
         });
 });
+
 
